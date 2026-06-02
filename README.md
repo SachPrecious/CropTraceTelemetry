@@ -18,7 +18,11 @@ GitHub Actions automatically builds the Docker image, pushes it to DockerHub, an
 
 ### Local Testing with Docker/Kind
 1. Configure your DockerHub credentials in GitHub Secrets (`DOCKER_USERNAME`, `DOCKER_PASSWORD`) to enable the CI/CD pipeline.
-2. To test locally on your own machine using Kind:
+2. If you are running on Kind, install the `local-path` provisioner before applying manifests:
+   ```bash
+   kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+   ```
+3. To test locally on your own machine using Kind:
    ```bash
    # Load k8s manifests
    kubectl apply -f k8s/

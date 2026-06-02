@@ -71,19 +71,6 @@ jobs:
           --from-literal=MONOLITH_API_KEY="${{ secrets.MONOLITH_API_KEY }}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
-    - name: Create Kubernetes secret with Rancher CLI if available
-      run: |
-        if command -v rancher >/dev/null 2>&1; then
-          rancher kubectl create secret generic app-secrets \
-            --namespace croptrace \
-            --from-literal=DB_USER="${{ secrets.DB_USER }}" \
-            --from-literal=DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-            --from-literal=MONOLITH_API_KEY="${{ secrets.MONOLITH_API_KEY }}" \
-            --dry-run=client -o yaml | rancher kubectl apply -f -
-        else
-          echo "rancher CLI not available; skipping rancher secret creation"
-        fi
-
     - name: Apply Kubernetes manifests
       run: |
         kubectl apply -k k8s/overlays/dev

@@ -9,6 +9,8 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.tag.outputs.image_tag }}
     
     steps:
     - name: Checkout repository
@@ -24,7 +26,13 @@ jobs:
       run: |
         go mod tidy
         go build -v ./...
-        # go test -v ./... (Add tests later)
+
+    - name: Determine Image Tag
+      id: tag
+      run: |
+        VERSION=$(jq -r .version api/version.json)
+        SHORT_SHA=${GITHUB_SHA::7}
+        echo "image_tag=${VERSION}-${SHORT_SHA}" >> $GITHUB_OUTPUT
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
@@ -32,19 +40,12 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@v4
-      with:
-        images: sachithram/croptracetelemetry
-
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
       with:
         context: ./api
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: sachithram/croptracetelemetry:${{ steps.tag.outputs.image_tag }}
 
   deploy-to-local-kind:
     needs: build-and-push
@@ -58,13 +59,13 @@ jobs:
       uses: helm/kind-action@v1.8.0
 
     - name: Update image tag with Kustomize
-      working-directory: ./k8s
+      working-directory: ./k8s/overlays/dev
       run: |
-        kustomize edit set image docker.io/sachithram/croptracetelemetry=sachithram/croptracetelemetry:main
+        kustomize edit set image docker.io/sachithram/croptracetelemetry=sachithram/croptracetelemetry:${{ needs.build-and-push.outputs.image_tag }}
 
     - name: Apply Kubernetes manifests
       run: |
-        kubectl apply -k k8s/
+        kubectl apply -k k8s/overlays/dev
 
     - name: Verify Deployment
       run: |

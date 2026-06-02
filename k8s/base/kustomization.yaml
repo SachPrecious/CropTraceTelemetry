@@ -6,6 +6,5 @@ namespace: croptrace
 resources:
   - 01-namespace.yaml
   - 02-configmap.yaml
-  - 03-secret.yaml
   - 04-postgres.yaml
   - 05-api.yaml

@@ -50,15 +50,12 @@ jobs:
 
   deploy-to-local-kind:
     needs: build-and-push
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: DEV
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
-
-    - name: Create k8s Kind Cluster
-      uses: helm/kind-action@v1.8.0
 
     - name: Update image tag with Kustomize
       working-directory: ./k8s/overlays/dev

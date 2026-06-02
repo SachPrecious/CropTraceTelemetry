@@ -36,7 +36,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v4
       with:
-        images: ${{ secrets.DOCKER_USERNAME }}/croptrace-api
+        images: sachithram/croptracetelemetry
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
@@ -60,7 +60,7 @@ jobs:
     - name: Update image tag with Kustomize
       working-directory: ./k8s
       run: |
-        kustomize edit set image docker.io/sachithramanamperi/croptrace-api=${{ secrets.DOCKER_USERNAME }}/croptrace-api:main
+        kustomize edit set image docker.io/sachithram/croptracetelemetry=sachithram/croptracetelemetry:main
 
     - name: Apply Kubernetes manifests
       run: |

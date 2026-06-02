@@ -18,7 +18,7 @@ spec:
       containers:
       - name: api
         # Image will be replaced during CI/CD
-        image: docker.io/sachithramanamperi/croptrace-api:latest
+        image: docker.io/sachithram/croptracetelemetry:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8000

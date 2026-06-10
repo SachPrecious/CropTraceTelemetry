@@ -69,6 +69,8 @@ jobs:
           --namespace croptrace \
           --from-literal=DB_USER="${{ secrets.DB_USER }}" \
           --from-literal=DB_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+          --from-literal=PGADMIN_DEFAULT_EMAIL="${{ secrets.PGADMIN_DEFAULT_EMAIL }}" \
+          --from-literal=PGADMIN_DEFAULT_PASSWORD="${{ secrets.PGADMIN_DEFAULT_PASSWORD }}" \
           --from-literal=MONOLITH_API_KEY="${{ secrets.MONOLITH_API_KEY }}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
